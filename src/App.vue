@@ -1,19 +1,31 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <div v-if="error" class="error text-red-500 bg-red-200">{{error}}</div>
+    <router-view />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { mapState, mapMutations } from "vuex";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+ 
+  computed: {
+    ...mapState({
+      error: (state) => state.app.error,
+    }),
+  },
+
+  methods: {
+    ...mapMutations(["setError"]),
+  },
+
+  mounted() {
+    if(this.error) this.setError("")
+    if (!window.ethereum) return this.setError( "No crypto wallet found. Please install it.")
+  },
+};
 </script>
 
 <style>
@@ -21,8 +33,11 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.error {
+  min-width: 320px;
+  padding: 16px;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
