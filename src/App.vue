@@ -22,7 +22,6 @@ export default {
   },
 
   mounted() {
-    if(this.error) this.setError("")
     if (!window.ethereum) return this.setError( "No crypto wallet found. Please install it.")
   },
 };

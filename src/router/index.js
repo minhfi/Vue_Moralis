@@ -12,7 +12,7 @@ const routes = [
     component: Home
   },
   {
-    path: '/send-eth-payment',
+    path: '/send-to',
     name: 'SendETHPayment',
     component: SendETHPayment
   }

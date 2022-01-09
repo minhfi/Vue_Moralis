@@ -24,7 +24,7 @@
 
     <!-- connect to wallet -->
     <button
-      v-if="!wallet.isConnected"
+      v-if="!wallet.info.isConnected"
       @click="handleConnect"
       class="
         text-white
@@ -42,8 +42,8 @@
 
     <!-- Send to eth payment -->
     <button
-      v-if="wallet.isConnected"
-      @click="$router.push('/send-eth-payment')"
+      v-if="wallet.info.isConnected"
+      @click="$router.push('/send-to')"
       class="
         text-white
         bg-blue-500
@@ -60,8 +60,8 @@
     </button>
 
     <button
-      v-if="wallet.isConnected"
-      @click="handleConnect"
+      v-if="wallet.info.isConnected"
+      @click="handleDisconnect"
       class="px-14 py-3 rounded-full border border-grey-500 text-2xl w-80"
     >
       Disconnected
@@ -75,14 +75,13 @@
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "Home",
   data() {
     return {
       web3Modal: null,
-      provider: null,
     };
   },
 
@@ -93,12 +92,11 @@ export default {
   },
 
   methods: {
-    ...mapMutations([
-      "setConnectToWallet",
-      "setInfoToWallet",
-      "resetWallet",
-      "setError",
-    ]),
+    ...mapActions({
+      setInfoToWallet: "wallet/setInfoToWallet",
+      resetWallet: "wallet/resetWallet",
+      setError: "app/setError",
+    }),
 
     initWeb3() {
       const providerOptions = {
@@ -118,24 +116,27 @@ export default {
     },
 
     async handleConnect() {
-      // handle disconnect && clear cache
-      if (this.wallet.isConnected) {
-        this.web3Modal.clearCachedProvider();
-        return this.resetWallet();
-      }
-
-      this.provider = await this.web3Modal
+      const provider = await this.web3Modal
         .connect()
         .catch(() => this.setError("Could not get a wallet connection"));
 
-      if (this.provider) {
-        this.getAccount();
-        this.subscribe();
+      if (provider) {
+        this.getAccount(provider);
+        this.subscribe(provider);
       }
     },
 
-    async getAccount() {
-      const web3 = new Web3(this.provider);
+    handleDisconnect() {
+      // handle disconnect && clear cache
+      if (this.wallet.info.isConnected) {
+        this.web3Modal.clearCachedProvider();
+        this.setError("")
+        return this.resetWallet();
+      }
+    },
+
+    async getAccount(provider) {
+      const web3 = new Web3(provider);
 
       const accounts = await web3.eth.getAccounts();
 
@@ -147,36 +148,37 @@ export default {
       const balance = web3.utils.fromWei(responBalance);
 
       const payload = {
+        isConnected: true,
+        provider,
         accounts: accounts[0],
         chainId,
         networkId,
         balance,
       };
 
-      this.setConnectToWallet();
       this.setInfoToWallet(payload);
     },
 
-    subscribe() {
-      if (!this.provider) return;
+    subscribe(provider) {
+      if (!provider) return;
 
       // Subscribe to accounts change
-      this.provider.on("accountsChanged", () => {
-        this.getAccount()
+      provider.on("accountsChanged", () => {
+        this.getAccount(provider);
       });
 
       // Subscribe to chainId change
-      this.provider.on("chainChanged", () => {
-        this.getAccount()
+      provider.on("chainChanged", () => {
+        this.getAccount(provider);
       });
 
       // Subscribe to networkId change
-      this.provider.on("networkChanged", () => {
-        this.getAccount()
+      provider.on("networkChanged", () => {
+        this.getAccount(provider);
       });
 
       // Subscribe to provider disconnection
-      this.provider.on("disconnect", (error) => {
+      provider.on("disconnect", (error) => {
         console.log(error);
       });
     },

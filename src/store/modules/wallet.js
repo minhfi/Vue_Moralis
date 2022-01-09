@@ -1,6 +1,12 @@
+import {
+  SET_INFO_TO_WALLET,
+  RESET_WALLET,
+} from "./constants";
+
 const state = {
-  isConnected: false,
   info: {
+    isConnected: false,
+    provider: null,
     accounts: null,
     chainId: null,
     networkId: null,
@@ -10,16 +16,25 @@ const state = {
 
 const getters = {};
 
+const actions = {
+  async setInfoToWallet({ commit }, payload) {
+    commit(SET_INFO_TO_WALLET, payload);
+  },
+
+  async resetWallet({ commit }) {
+    commit(RESET_WALLET);
+  },
+};
+
 const mutations = {
-  setConnectToWallet(state) {
-    state.isConnected = true
+  [SET_INFO_TO_WALLET](state, payload) {
+    state.info = { ...state.info, ...payload };
   },
-  setInfoToWallet(state, payload) {
-    state.info = {...state.info, ...payload };
-  },
-  resetWallet(state) {
-    state.isConnected = false;
+
+  [RESET_WALLET](state) {
     state.info = {
+      isConnected: false,
+      provider: null,
       accounts: null,
       chainId: null,
       networkId: null,
@@ -29,7 +44,9 @@ const mutations = {
 };
 
 export default {
+  namespaced: true,
   state,
   getters,
+  actions,
   mutations,
 };
