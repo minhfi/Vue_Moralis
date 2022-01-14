@@ -1,28 +1,34 @@
 <template>
   <div>
-    <div v-if="error" class="error text-red-500 bg-red-200">{{error}}</div>
     <router-view />
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import Moralis from "moralis";
 
 export default {
   name: "App",
- 
-  computed: {
-    ...mapState({
-      error: (state) => state.app.error,
-    }),
+  data() {
+    return {};
   },
 
   methods: {
-    ...mapMutations(["setError"]),
+    async checkIsWeb3Installed() {
+      const isWeb3Active = Moralis.ensureWeb3IsInstalled();
+      if (!isWeb3Active) await Moralis.enableWeb3();
+    },
+
+    async checkIsMetaMaskInstalled() {
+      const isMetaMaskInstalled = await Moralis.isMetaMaskInstalled();
+      if (!isMetaMaskInstalled)
+        return alert("No crypto wallet found. Please install it.");
+    },
   },
 
   mounted() {
-    if (!window.ethereum) return this.setError( "No crypto wallet found. Please install it.")
+    this.checkIsMetaMaskInstalled();
+    this.checkIsWeb3Installed();
   },
 };
 </script>
@@ -32,11 +38,5 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-.error {
-  min-width: 320px;
-  padding: 16px;
-  text-align: center;
 }
 </style>

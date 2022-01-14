@@ -1,0 +1,35 @@
+.label {
+  color: #767676;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 26px;
+  letter-spacing: 0.25px;
+}
+
+.subtitle1 {
+  color: #222222;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: 0.15px;
+}
+
+.subtitle2 {
+    color: #222222;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: 0.15px;
+  }
+
+.box-section {
+  padding: 32px 24px;
+  background: #fff;
+  box-shadow: 0px 4px 8px rgb(0 0 0 / 4%), 0px 0px 2px rgb(0 0 0 / 6%),
+    0px 0px 1px rgb(0 0 0 / 4%);
+  border-radius: 4px;
+}
+
+button {
+  box-shadow: unset !important
+}

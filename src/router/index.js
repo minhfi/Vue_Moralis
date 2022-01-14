@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import SendETHPayment from '../views/SendETHPayment'
 import Home from '../views/Home'
 
 Vue.use(VueRouter)
@@ -11,11 +10,6 @@ const routes = [
     name: 'home',
     component: Home
   },
-  {
-    path: '/send-to',
-    name: 'SendETHPayment',
-    component: SendETHPayment
-  }
 ]
 
 const router = new VueRouter({

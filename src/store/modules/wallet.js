@@ -1,16 +1,17 @@
-import {
-  SET_INFO_TO_WALLET,
-  RESET_WALLET,
-} from "./constants";
+import { SET_INFO_TO_WALLET, RESET_WALLET } from "./constants";
 
 const state = {
   info: {
     isConnected: false,
     provider: null,
-    accounts: null,
+    address: null,
+    tokenAddress: null,
     chainId: null,
     networkId: null,
     balance: null,
+    symbol: null,
+    decimals: null,
+    tokens: []
   },
 };
 
@@ -35,10 +36,14 @@ const mutations = {
     state.info = {
       isConnected: false,
       provider: null,
-      accounts: null,
+      address: null,
+      tokenAddress: null,
       chainId: null,
       networkId: null,
       balance: null,
+      symbol: null,
+      decimals: null,
+      tokens: []
     };
   },
 };
